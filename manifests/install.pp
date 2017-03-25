@@ -37,4 +37,5 @@ class mongodb_cluster::install {
         admin_password => $admin_password,
         replset        => $mongodb_replset,
     }
+    class { '::mongodb::client': }
 }
