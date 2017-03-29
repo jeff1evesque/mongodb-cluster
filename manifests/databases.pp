@@ -3,22 +3,17 @@
 ###
 
 class mongodb_cluster::databases {
+    include mongodb::server::config
     include mongodb_cluster::install
 
     ## local variables
-    $hiera_database = lookup('database')
-    $hiera_mongodb  = $hiera_database['mongodb_cluster']
-    $hiera_user     = $hiera_mongodb['user']
-    $admin_user     = $hiera_user['admin']['name']
-    $admin_password = $hiera_user['admin']['password']
-    $db_dir         = ['/data', '/data/db']
-
-    file { $db_dir:
-        ensure => 'directory',
-        owner  => root,
-        group  => root,
-        mode   => '0640',
-    }
+    $mongodb_node     = lookup('mongodb_node')
+    $mongodb_database = lookup('database')
+    $mongodb_cluster  = $mongodb_database['mongodb_cluster']
+    $hiera_user       = $mongodb_cluster['user']
+    $db_path          = $mongodb_cluster['db_path']
+    $admin_user       = $hiera_user['admin']['name']
+    $admin_password   = $hiera_user['admin']['password']
 
     mongodb_database { 'svm_dataset':
         ensure  => present,
@@ -26,7 +21,8 @@ class mongodb_cluster::databases {
         require => [
             Class['::mongodb::server'],
             Class['::mongodb::client'],
-            File[$db_dir],
+            File[$db_path[0]],
+            File[$db_path[1]],
         ],
     }
 
@@ -36,7 +32,8 @@ class mongodb_cluster::databases {
         require => [
             Class['::mongodb::server'],
             Class['::mongodb::client'],
-            File[$db_dir],
+            File[$db_path[0]],
+            File[$db_path[1]],
         ],
     }
 
@@ -51,6 +48,8 @@ class mongodb_cluster::databases {
             Class['::mongodb::server'],
             Mongodb_database['svm_dataset'],
             Mongodb_database['svr_dataset'],
+            File[$db_path[0]],
+            File[$db_path[1]],
         ],
     }
 }
