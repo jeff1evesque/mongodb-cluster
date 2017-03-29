@@ -3,6 +3,11 @@
 ###
 
 class mongodb_cluster {
+    $hiera_mongodb = lookup('mongodb_node')
+    $config_server = $hiera_mongodb['configsvr']
+
     contain mongodb_cluster::install
-    contain mongodb_cluster::databases
+    if (!$config_server) {
+        contain mongodb_cluster::databases
+    }
 }
