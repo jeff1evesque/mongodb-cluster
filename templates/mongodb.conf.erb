@@ -1,0 +1,35 @@
+## mongodb.conf, this file is enforced by puppet.
+
+## where and how to store data.
+storage:
+  dbPath: <%= @dbPath %>
+  journal:
+    enabled: <%= @journal %>
+  engine: <%= engine %>
+  mmapv1:
+    smallFiles: <%= @smallFiles %>
+
+## where to write logging data.
+systemLog:
+  verbosity: <%= verbosity %>
+  destination: <%= destination %>
+  logAppend: <%= @logAppend %>
+  path: <%= @systemLogPath %>
+
+## network interfaces
+net:
+  port: <%= @port %>
+  bindIp: <%= @bindIp %>
+
+## mongodb process
+processManagement:
+  fork: <%= @fork %>
+  pidfilepath: <%= pidfilepath %>
+
+## replication
+replication:
+  replSetName: <%= @replSetName %>
+
+## sharding
+sharding:
+  clusterRole: <% clusterRole %>
