@@ -3,15 +3,16 @@
 ###
 class mongodb_cluster::install {
     ## local variables
-    $mongodb       = lookup('database')
-    $packages      = lookup('development')
-    $db_path       = $mongodb['mongodb_cluster']['db_path']
-    $apt_keyserver = $packages['keyserver']['apt']
-    $mongodb_key   = '0C49F3730359A14518585931BC711F9BA15703C6'
+    $mongodb             = lookup('database')
+    $packages            = lookup('development')
+    $db_path             = $mongodb['mongodb_cluster']['db_path']
+    $keyserver           = $packages['keyserver']['apt']
+    $mongodb_key         = $packages['keyserver']['mongodb_key']
+    $mongodb_source_list = $packages['keyserver']['mongodb_key']
 
     ## https://docs.mongodb.com/v3.4/tutorial/install-mongodb-on-ubuntu/
     exec { 'apt-key-puppetlabs':
-        command => "apt-key adv --keyserver ${apt_keyserver} --recv ${mongodb_key}",
+        command => "apt-key adv --keyserver ${keyserver} --recv ${mongodb_key}",
         unless  => "apt-key list | grep ${mongodb_key}",
         before  => File['mongodb-list-file'],
         path    => ['/usr/bin', '/bin'],
@@ -19,7 +20,7 @@ class mongodb_cluster::install {
 
     file { 'mongodb-list-file':
         path    => '/etc/apt/sources.list.d/mongodb-org-3.4.list',
-        content => 'deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.4 multiverse',
+        content => $mongodb_source_list,
         require => Exec['apt-key-puppetlabs'],
         notify  => Exec['apt_update'],
     }
