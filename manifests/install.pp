@@ -2,55 +2,51 @@
 ### Install required components for mongodb cluster.
 ###
 class mongodb_cluster::install {
-#    include mongodb::server::config
-
     ## local variables
-    $hiera_database     = lookup('database')
-    $hiera_mongodb      = lookup('mongodb_node')
-    $user               = $hiera_database['mongodb_cluster']['user']
-    $db_path            = $hiera_database['mongodb_cluster']['db_path']
-    $admin_user         = $user['admin']['name']
-    $admin_password     = $user['admin']['password']
-    $mongodb_ip         = $hiera_mongodb['ip']
-    $mongodb_host       = $hiera_mongodb['host']
-    $mongodb_port       = $hiera_mongodb['port']
-    $mongodb_auth       = $hiera_mongodb['auth']
-    $mongodb_replset    = $hiera_mongodb['replset']
-    $mongodb_smallfiles = $hiera_mongodb['smallfiles']
-    $mongodb_configsvr  = $hiera_mongodb['configsvr']
-    $mongodb_fork       = $hiera_mongodb['fork']
-    $mongodb_verbose    = $hiera_mongodb['verbose']
-    $mongodb_keyfile    = $hiera_mongodb['keyfile']
-    $mongodb_key        = $hiera_mongodb['key']
-    $mongodb_10gen      = $hiera_mongodb['manage_package_repo']
+    $mongodb       = lookup('database')
+    $packages      = lookup('development')
+    $db_path       = $mongodb['mongodb_cluster']['db_path']
+    $apt_keyserver = $packages['keyserver']['apt']
+    $mongodb_key   = '0C49F3730359A14518585931BC711F9BA15703C6'
+
+    ## https://docs.mongodb.com/v3.4/tutorial/install-mongodb-on-ubuntu/
+    exec { 'apt-key-puppetlabs':
+        command => "apt-key adv --keyserver ${apt_keyserver} --recv ${mongodb_key}",
+        unless  => "apt-key list | grep ${mongodb_key}",
+        before  => File['mongodb-list-file'],
+        path    => ['/usr/bin', '/bin'],
+    }
+
+    file { 'mongodb-list-file':
+        path    => '/etc/apt/sources.list.d/mongodb-org-3.4.list',
+        content => 'deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.4 multiverse',
+        require => Exec['apt-key-puppetlabs'],
+        notify  => Exec['apt_update'],
+    }
+
+    exec { 'apt_update':
+        command     => 'apt-get update',
+        path        => '/usr/bin',
+        before      => Package['mongodb-org-server'],
+        refreshonly => true,
+    }
+
+    package { 'mongodb-org-server':
+        ensure  => installed,
+    }
+
+    package { 'mongodb-org-shell':
+        ensure => installed,
+    }
 
     ## ensure base path
-    file { $db_path[0]:
+    file { $db_path:
         ensure => directory,
         mode   => '0755',
-        owner  => root,
+        owner  => mongodb,
         group  => root,
+        require => [
+            Package['mongodb-org-server']
+        ]
     }
-
-    ## recommended repository
-    class { '::mongodb::globals':
-        manage_package_repo => $mongodb_10gen,
-    }
-
-    ## mongodb node
-    class { '::mongodb::server':
-#        bind_ip        => $mongodb_ip,
-        bind_ip        => '0.0.0.0',
-        port           => $mongodb_port,
-        dbpath         => $db_path[1],
-        fork           => $mongodb_fork,
-        verbose        => $mongodb_verbose,
-        auth           => $mongodb_auth,
-        smallfiles     => $mongodb_smallfiles,
-        configsvr      => $mongodb_configsvr,
-        admin_username => $admin_user,
-        admin_password => $admin_password,
-        replset        => $mongodb_replset,
-    }
-    class { '::mongodb::client': }
 }
