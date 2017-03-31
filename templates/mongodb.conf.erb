@@ -5,14 +5,16 @@ storage:
   dbPath: <%= @dbPath %>
   journal:
     enabled: <%= @journal %>
-  engine: <%= engine %>
+  engine: <%= @engine %>
+  <% if @engine == 'mmapv1' %>
   mmapv1:
     smallFiles: <%= @smallFiles %>
+  <% end %>
 
 ## where to write logging data.
 systemLog:
-  verbosity: <%= verbosity %>
-  destination: <%= destination %>
+  verbosity: <%= @verbosity %>
+  destination: <%= @destination %>
   logAppend: <%= @logAppend %>
   path: <%= @systemLogPath %>
 
@@ -24,7 +26,7 @@ net:
 ## mongodb process
 processManagement:
   fork: <%= @fork %>
-  pidfilepath: <%= pidfilepath %>
+  pidfilepath: <%= @pidfilepath %>
 
 ## replication
 replication:
@@ -32,4 +34,4 @@ replication:
 
 ## sharding
 sharding:
-  clusterRole: <% clusterRole %>
+  clusterRole: <% @clusterRole %>
