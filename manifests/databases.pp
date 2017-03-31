@@ -3,7 +3,6 @@
 ###
 
 class mongodb_cluster::databases {
-    include mongodb::server::config
     include mongodb_cluster::install
 
     ## local variables
@@ -19,8 +18,8 @@ class mongodb_cluster::databases {
         ensure  => present,
         tries   => 10,
         require => [
-            Class['::mongodb::server'],
-            Class['::mongodb::client'],
+            Package['mongodb-org-server'],
+            Package['mongodb-org-shell'],
             File[$db_path[0]],
             File[$db_path[1]],
         ],
@@ -30,8 +29,8 @@ class mongodb_cluster::databases {
         ensure  => present,
         tries   => 10,
         require => [
-            Class['::mongodb::server'],
-            Class['::mongodb::client'],
+            Package['mongodb-org-server'],
+            Package['mongodb-org-shell'],
             File[$db_path[0]],
             File[$db_path[1]],
         ],
@@ -45,7 +44,8 @@ class mongodb_cluster::databases {
         roles         => ['readWrite', 'dbAdmin'],
         tries         => 10,
         require       => [
-            Class['::mongodb::server'],
+            Package['mongodb-org-server'],
+            Package['mongodb-org-shell'],
             Mongodb_database['svm_dataset'],
             Mongodb_database['svr_dataset'],
             File[$db_path[0]],

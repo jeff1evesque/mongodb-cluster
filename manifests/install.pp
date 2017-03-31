@@ -8,7 +8,7 @@ class mongodb_cluster::install {
     $db_path             = $mongodb['mongodb_cluster']['db_path']
     $keyserver           = $packages['keyserver']['apt']
     $mongodb_key         = $packages['keyserver']['mongodb_key']
-    $mongodb_source_list = $packages['keyserver']['mongodb_key']
+    $mongodb_source_list = $packages['keyserver']['mongodb_source_list']
 
     ## https://docs.mongodb.com/v3.4/tutorial/install-mongodb-on-ubuntu/
     exec { 'apt-key-puppetlabs':
