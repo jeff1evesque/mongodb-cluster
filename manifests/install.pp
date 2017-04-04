@@ -3,9 +3,7 @@
 ###
 class mongodb_cluster::install {
     ## local variables
-    $mongodb             = lookup('database')
     $packages            = lookup('development')
-    $db_path             = $mongodb['mongodb_cluster']['db_path']
     $keyserver           = $packages['keyserver']['apt']
     $mongodb_key         = $packages['keyserver']['mongodb_key']
     $mongodb_source_list = $packages['keyserver']['mongodb_source_list']
@@ -38,16 +36,5 @@ class mongodb_cluster::install {
 
     package { 'mongodb-org-shell':
         ensure => installed,
-    }
-
-    ## ensure base path
-    file { $db_path:
-        ensure => directory,
-        mode   => '0755',
-        owner  => mongodb,
-        group  => root,
-        require => [
-            Package['mongodb-org-server']
-        ]
     }
 }
