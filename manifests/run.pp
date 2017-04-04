@@ -1,7 +1,7 @@
 ###
-### Configure sharded replica sets.
+### Run mongod instance.
 ###
-class mongodb_cluster::shard {
+class mongodb_cluster::run {
     ## local variables
     $mongodb_node  = lookup('mongodb_node')
     $storage       = $mongodb_node['storage']
@@ -11,7 +11,7 @@ class mongodb_cluster::shard {
     $replset       = $mongodb_node['replication']
     $shard         = $mongodb_node['sharding']
     $engine        = $storage['engine']
-    $dbPath        = $storage['dbPath'][1]
+    $dbPath        = $storage['dbPath']
     $journal       = $storage['journal']['enabled']
     $smallFiles    = $storage['mmapv1']['smallFiles']
     $verbosity     = $systemLog['verbosity']
@@ -25,8 +25,41 @@ class mongodb_cluster::shard {
     $replSetName   = $replset['replSetName']
     $clusterRole   = $shard['clusterRole']
 
+    ## ensure base path
+    file { $db_path:
+        ensure => directory,
+        mode   => '0755',
+        owner  => mongodb,
+        group  => root,
+    }
+
+    ## general mongod configuration
     file { '/etc/mongod.conf':
         ensure  => file,
         content => dos2unix(template('mongodb_cluster/mongodb.conf.erb')),
+        mode    => '0644',
+        owner   => mongodb,
+        root    => root,
+        notify  => Service['start-mongod'],
+    }
+
+    ## mongod init script
+    file { '/etc/init/upstart-mongod.conf':
+        ensure  => file,
+        content => dos2unix(template('mongodb_cluster/mongod.conf.erb')),
+        mode    => '0644',
+        owner   => mongodb,
+        root    => root,
+        notify  => Service['upstart-mongod'],
+    }
+
+    ## enforce mongod init script
+    service { 'upstart-mongod':
+        ensure  => running,
+        enable  => true,
+        require => [
+            File['/etc/mongod.conf'],
+            File['/etc/init/start-mongod.conf'],
+        ],
     }
 }
