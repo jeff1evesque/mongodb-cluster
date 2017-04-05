@@ -21,7 +21,7 @@ class mongodb_cluster::run {
     $port          = $net['port']
     $bindIp        = $net['bindIp']
     $fork          = $process['fork']
-    $pidfilepath   = $process['fork']
+    $pidfilepath   = $process['pidfilepath']
     $replSetName   = $replset['replSetName']
     $clusterRole   = $shard['clusterRole']
 
