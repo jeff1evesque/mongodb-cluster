@@ -21,6 +21,5 @@ class mongodb_cluster::shard {
             "mongo --host ${initiate_ip} --port ${initiate_port} --quiet --eval 'rs.status()[\"ok\"]');",
         ],
         path     => '/usr/bin',
-        provider => shell,
     }
 }
