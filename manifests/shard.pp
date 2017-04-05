@@ -3,12 +3,15 @@
 ###
 class mongodb_cluster::shard {
     ## local variables
+    ##
+    ## @replset, yaml hash converted to a json string.
+    ##
     $mongodb_node  = lookup('mongodb_node')
     $replication   = $mongodb_node['replication']
     $sharding      = $mongodb_node['sharding']
     $initiate_ip   = $sharding['initiate']['ip']
     $initiate_port = $sharding['initiate']['port']
-    $replset       = $replication['replset']
+    $replset       = inline_template("<%= require 'json'; @replication['replset'].to_json %>")
 
     ## initiate config server
     exec { 'initiate-replset-configsrv':
