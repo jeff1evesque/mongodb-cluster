@@ -39,7 +39,7 @@ class mongodb_cluster::run {
         content => dos2unix(template('mongodb_cluster/mongodb.conf.erb')),
         mode    => '0644',
         owner   => mongodb,
-        root    => root,
+        group   => root,
         notify  => Service['start-mongod'],
     }
 
@@ -49,7 +49,7 @@ class mongodb_cluster::run {
         content => dos2unix(template('mongodb_cluster/mongod.conf.erb')),
         mode    => '0644',
         owner   => mongodb,
-        root    => root,
+        group   => root,
         notify  => Service['upstart-mongod'],
     }
 
