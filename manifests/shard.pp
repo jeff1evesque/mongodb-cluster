@@ -14,7 +14,7 @@ class mongodb_cluster::shard {
     $replset       = inline_template("<%= require 'json'; @replication['replset'].to_json %>")
 
     ## initiate replica sets
-    exec { 'initiate-replset-configsrv':
+    exec { 'initiate-replset':
         command  => "mongo --host ${initiate_ip} --port ${initiate_port} --eval 'rs.initiate(${replset});'",
         onlyif   => [
             "mongo --host ${initiate_ip} --port ${initiate_port} --quiet --eval 'quit();'",
