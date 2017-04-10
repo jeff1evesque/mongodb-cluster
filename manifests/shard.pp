@@ -13,7 +13,7 @@ class mongodb_cluster::shard {
     $initiate_port = $sharding['initiate']['port']
     $replset       = inline_template("<%= require 'json'; @replication['replset'].to_json %>")
 
-    ## initiate config server
+    ## initiate replica sets
     exec { 'initiate-replset-configsrv':
         command  => "mongo --host ${initiate_ip} --port ${initiate_port} --eval 'rs.initiate(${replset});'",
         onlyif   => [
