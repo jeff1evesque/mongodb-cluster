@@ -1,0 +1,17 @@
+## mongos.conf, this file is enforced by puppet.
+
+## where to write logging data.
+systemLog:
+  verbosity: <%= @verbosity %>
+  destination: <%= @destination %>
+  logAppend: <%= @logAppend %>
+  path: <%= @systemLogPath %>
+
+## network interfaces
+net:
+  port: <%= @port %>
+  bindIp: <%= @bindIp %>
+
+## sharding
+sharding:
+  configDB: <%= @configDB %>
