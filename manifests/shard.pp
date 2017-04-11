@@ -26,6 +26,9 @@ class mongodb_cluster::shard {
     }
 
     ## add shards to the cluster
+    ##
+    ## Note: need 'shell' provider for subshell implementation.
+    ##
     $replset.each |String $type, $set| {
         if ($replset != 'csrs') {
             $set.each|String $host|
@@ -33,9 +36,15 @@ class mongodb_cluster::shard {
                     command  => "mongo --host ${initiate_ip} --port ${initiate_port} --eval 'sh.addShard(\"${replset}/${host}.mongodb.com:27018\");'",
                     onlyif   => [
                         "mongo --host ${initiate_ip} --port ${initiate_port} --quiet --eval 'quit();'",
-                        "mongo --host ${initiate_ip} --port ${initiate_port} --quiet --eval 'sh.status()');",
+                        "mongo --host ${initiate_ip} --port ${initiate_port} --quiet --eval 'sh.status()';",
+                        dos2unix(template('mongodb_cluster/shard-status.erb')),
                     ],
-                    path     => '/usr/bin',
+                    path     => [
+                        '/bin',
+                        '/usr',
+                        '/usr/bin',
+                    ],
+                    provider => shell,
                 }
             }
         }
