@@ -8,7 +8,7 @@ END='databases:'
 STATUS=$(mongo --host ${initiate_ip} --port ${initiate_port} --quiet --eval 'sh.status();')
 
 ## check for shards
-RESULT=sed -n "/$START/,/$END/{/$START/b;/$END/b;p}" "$STATUS")
+RESULT=$(sed -n "/$START/,/$END/{/$START/b;/$END/b;p}" "$STATUS")
 if [ ${#RESULT} -eq 0 ]; then
     exit 1
 else
