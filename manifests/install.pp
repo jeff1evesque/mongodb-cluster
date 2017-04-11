@@ -3,10 +3,12 @@
 ###
 class mongodb_cluster::install {
     ## local variables
+    $mongodb_node        = lookup('mongodb_node')
     $packages            = lookup('development')
     $keyserver           = $packages['keyserver']['apt']
     $mongodb_key         = $packages['keyserver']['mongodb_key']
     $mongodb_source_list = $packages['keyserver']['mongodb_source_list']
+    $mongodb_type        = $mongodb_node['type']
 
     ## https://docs.mongodb.com/v3.4/tutorial/install-mongodb-on-ubuntu/
     exec { 'apt-key-puppetlabs':
@@ -30,11 +32,19 @@ class mongodb_cluster::install {
         refreshonly => true,
     }
 
-    package { 'mongodb-org-server':
-        ensure  => installed,
+    if ($mongodb_type == 'mongod') {
+        package { 'mongodb-org-server':
+            ensure  => installed,
+        }
+
+        package { 'mongodb-org-shell':
+            ensure => installed,
+        }
     }
 
-    package { 'mongodb-org-shell':
-        ensure => installed,
+    elsif ($mongodb_type == 'mongos') {
+        package { 'mongodb-org-mongos':
+            ensure  => installed,
+        }
     }
 }
