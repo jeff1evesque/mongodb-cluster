@@ -6,7 +6,9 @@ class mongodb_cluster::shard {
     ##
     ## @replset, yaml hash converted to a json string.
     ##
+    $database      = lookup('database')
     $mongodb_node  = lookup('mongodb_node')
+    $replset       = $database['mongodb_cluster']['replset']
     $replication   = $mongodb_node['replication']
     $sharding      = $mongodb_node['sharding']
     $initiate_ip   = $sharding['initiate']['ip']
@@ -22,4 +24,24 @@ class mongodb_cluster::shard {
         ],
         path     => '/usr/bin',
     }
+
+    ## add shards to the cluster
+    $replset.each |String $type, $set| {
+        if ($replset != 'csrs') {
+            $set.each|String $host|
+                exec { "add-${replset}-${host}":
+                    command  => "mongo --host ${initiate_ip} --port ${initiate_port} --eval 'sh.addShard(\"${replset}/${host}.mongodb.com:27018\");'",
+                    onlyif   => [
+                        "mongo --host ${initiate_ip} --port ${initiate_port} --quiet --eval 'quit();'",
+                        "mongo --host ${initiate_ip} --port ${initiate_port} --quiet --eval 'sh.status()');",
+                    ],
+                    path     => '/usr/bin',
+                }
+            }
+        }
+    }
+
+    ## enable sharding for database(s)
+
+    ## shard a collection
 }
