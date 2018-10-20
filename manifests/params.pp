@@ -25,7 +25,7 @@ class mongodb_cluster::params {
         $logAppend           = $hiera['mongodb']['systemLog']['logAppend']
         $systemLogPath       = $hiera['mongodb']['systemLog']['systemLogPath']
         $port                = $hiera['mongodb']['net']['port']
-        $bindIp              = $hiera['mongodb']['net']['bindIp']
+        $bindIp              = $hiera['bindIp']
         $pidfilepath         = $hiera['mongodb']['processManagement']['pidfilepath']
         $keyserver           = $hiera['mongodb']['keyserver']
         $mongodb_key         = $hiera['mongodb']['mongodb_key']
@@ -39,9 +39,9 @@ class mongodb_cluster::params {
         $mongodb_host        = $hiera['mongodb']['host']
         $mongodb_port        = $hiera['mongodb']['port']
         $mongodb_auth        = $hiera['mongodb']['auth']
-        $mongodb_replset     = $hiera['mongodb']['replset']
+        $mongodb_replset     = $hiera['replset']
         $mongodb_smallfiles  = $hiera['mongodb']['smallfiles']
-        $mongodb_configsvr   = $hiera['mongodb']['configsvr']
+        $mongodb_configsvr   = $hiera['configsvr']
         $mongodb_verbose     = $hiera['mongodb']['verbose']
         $mongodb_10gen       = $hiera['mongodb']['manage_package_repo']
     }
@@ -55,7 +55,7 @@ class mongodb_cluster::params {
         $logAppend           = true
         $systemLogPath       = '/var/log/mongodb/mongod.log'
         $port                = 27017
-        $bindIp              = '127.0.0.1'
+        $bindIp              = ['127.0.0.1']
         $pidfilepath         = '/var/run/mongod.pid'
         $keyserver           = 'hkp://keyserver.ubuntu.com:80'
         $mongodb_key         = '9DA31620334BD75D9DCB49F368818C72E52529D4'
