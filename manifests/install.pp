@@ -12,8 +12,7 @@ class mongodb_cluster::install {
     $mongodb_smallfiles = $::mongodb_cluster::smallfiles
     $mongodb_configsvr  = $::mongodb_cluster::configsvr
     $mongodb_verbose    = $::mongodb_cluster::verbose
-    $mongodb_keyfile    = $::mongodb_cluster::keyfile
-    $mongodb_key        = $::mongodb_cluster::key
+    $mongodb_10gen      = $::mongodb_cluster::manage_package_repo
 
     ## recommended repository
     class { '::mongodb::globals':

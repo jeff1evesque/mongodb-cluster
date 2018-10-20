@@ -43,8 +43,7 @@ class mongodb_cluster::params {
         $mongodb_smallfiles  = $hiera['mongodb']['smallfiles']
         $mongodb_configsvr   = $hiera['mongodb']['configsvr']
         $mongodb_verbose     = $hiera['mongodb']['verbose']
-        $mongodb_keyfile     = $hiera['mongodb']['keyfile']
-        $mongodb_key         = $hiera['mongodb']['key']
+        $mongodb_10gen       = $hiera['mongodb']['manage_package_repo']
     }
 
     else {
@@ -74,7 +73,6 @@ class mongodb_cluster::params {
         $mongodb_smallfiles  = false
         $mongodb_configsvr   = false
         $mongodb_verbose     = false
-        $mongodb_keyfile     = 'None'
-        $mongodb_key         = 'None'
+        $mongodb_10gen       = $hiera['mongodb']['manage_package_repo']
     }
 }
